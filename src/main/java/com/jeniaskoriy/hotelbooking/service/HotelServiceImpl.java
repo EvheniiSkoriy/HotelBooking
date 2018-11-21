@@ -21,8 +21,8 @@ public class HotelServiceImpl implements HotelService {
 
         return hotelRepository.findAll().stream()
                 .filter(bookDates ->
-                    bookDates.getBookedDates().stream()
-                            .noneMatch(d -> d.getBookedDate().equals(date))
+                        bookDates.getBookedDates().stream()
+                                .noneMatch(d -> d.getBookedDate().equals(date))
                 )
                 .collect(Collectors.toList());
     }

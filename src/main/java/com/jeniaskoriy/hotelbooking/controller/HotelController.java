@@ -5,9 +5,7 @@ import com.jeniaskoriy.hotelbooking.dto.ApartmentDTOOut;
 import com.jeniaskoriy.hotelbooking.model.Apartment;
 import com.jeniaskoriy.hotelbooking.model.BookedDate;
 import com.jeniaskoriy.hotelbooking.service.HotelService;
-import com.jeniaskoriy.hotelbooking.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,14 +24,14 @@ public class HotelController {
     public List<ApartmentDTOOut> getAllBookedApartments() {
         List<Apartment> bookedApartments = hotelService.getBookedApartments();
         List<ApartmentDTOOut> bookedApartmentsDto = new ArrayList<>();
-        for(Apartment apt:bookedApartments){
-            for(BookedDate bd: apt.getBookedDates())
-            bookedApartmentsDto
-                    .add(new ApartmentDTOOut(apt.getId(),
-                            apt.getNumber(),
-                            apt.getCategory(),
-                            apt.getPrice(),
-                            bd.getBookedDate()));
+        for (Apartment apt : bookedApartments) {
+            for (BookedDate bd : apt.getBookedDates())
+                bookedApartmentsDto
+                        .add(new ApartmentDTOOut(apt.getId(),
+                                apt.getNumber(),
+                                apt.getCategory(),
+                                apt.getPrice(),
+                                bd.getBookedDate()));
         }
         return bookedApartmentsDto;
     }
@@ -42,14 +40,14 @@ public class HotelController {
     public List<ApartmentDTOOut> getAllFreeApartments(
             @PathVariable
             @NotNull
-                    @DateTimeFormat(pattern = "yyyy-MM-dd")
-            LocalDate date,
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+                    LocalDate date,
             @RequestParam(defaultValue = "number")
-            String sort
+                    String sort
     ) {
 
         List<Apartment> freeApartments = hotelService.getFreeApartments(date);
-        if(sort.equals("category")){
+        if (sort.equals("category")) {
             Collections.sort(freeApartments);
         }
 

@@ -32,16 +32,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void bookApartment(User user, Apartment apartment, LocalDate date, Integer duration) {
+        boolean apartmentPresent = false;
+        apartment.addBookedDates(date, duration, user.getName());
 
-        apartment.addBookedDates(date,duration,user.getName());
-        System.out.println(user.getBookedApartments());
-        for(Apartment apt:user.getBookedApartments()){
-
-            System.out.println("USER APARTMENT:"+apt);
-            System.out.println("NEW APARTMENT:" + apartment);
-            if(apt.getId().equals(apartment.getId())){
-                user.addApartment(apartment);
+        for (Apartment apt : user.getBookedApartments()) {
+            if (apt.getId().equals(apartment.getId())) {
+                apartmentPresent = true;
             }
+        }
+        if (!apartmentPresent) {
+            user.addApartment(apartment);
         }
         userRepository.saveAndFlush(user);
         hotelRepository.save(apartment);
@@ -51,7 +51,6 @@ public class UserServiceImpl implements UserService {
     public User findByName(String name) {
         return userRepository.findByName(name);
     }
-
 
 
 }

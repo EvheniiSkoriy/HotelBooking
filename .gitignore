@@ -1,5 +1,6 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
+.mvn/*
 
 ### STS ###
 .apt_generated
@@ -11,10 +12,12 @@
 .sts4-cache
 
 ### IntelliJ IDEA ###
+mvnw
 .idea
 *.iws
 *.iml
 *.ipr
+*.cmd
 
 ### NetBeans ###
 /nbproject/private/

@@ -14,14 +14,17 @@ import com.jeniaskoriy.hotelbooking.model.User;
 import com.jeniaskoriy.hotelbooking.service.HotelService;
 import com.jeniaskoriy.hotelbooking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RestController
 public class UserController {
@@ -36,32 +39,44 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerNewUser(@RequestBody UserDTOIn userDTOIn) {
+    public ResponseEntity<?> registerNewUser(@RequestBody UserDTOIn userDTOIn) {
         User user = new User(userDTOIn.getName());
 
-        userService.save(user);
-        return user.getName() + " was successful created";
+        try {
+            userService.save(user);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/hotel/book")
-    public String bookApartment(
+    public ResponseEntity<?> bookApartment(
             @RequestBody @NotNull @Valid BookingList bookingList) {
 
         Apartment apartment = hotelService.findById(bookingList.getRoomId());
         User user = userService.findByName(bookingList.getName());
-        if(user == null){
+
+        if (user == null) {
             throw new UserNotFoundException(bookingList.getName());
-        }else if(apartment == null){
+        } else if (apartment == null) {
             throw new ApartmentNotFoundException(bookingList.getRoomId());
         }
-        for (BookedDate date : apartment.getBookedDates()) {
-            if (date.getBookedDate().equals(bookingList.getDate())) {
-                throw new ApartmentWasBookedException();
+
+        LocalDate durationDays = bookingList.getDate();
+        for (int i = 0; i < bookingList.getDuration(); i++) {
+            for (int j = 0; j < apartment.getBookedDates().size(); j++) {
+                if (apartment.getBookedDates().get(j).getBookedDate().equals(durationDays)) {
+                    throw new ApartmentWasBookedException();
+                }
             }
+            durationDays = durationDays.plusDays(1);
         }
+
         userService.bookApartment(user, apartment, bookingList.getDate(), bookingList.getDuration());
 
-        return "Successful";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/hotel/{username}")
@@ -76,11 +91,9 @@ public class UserController {
             throw new UserNotFoundException(username);
         }
         List<ApartmentDTOOut> bookedApartmentsOut = new ArrayList<>();
-        for(Apartment apartment:bookedApartments){
-            System.out.println(apartment);
-            for(BookedDate bookedDate:apartment.getBookedDates()){
-                System.out.println("BOOKED DATE: " + bookedDate);
-                if(bookedDate.getUsername().equals(user.getName())){
+        for (Apartment apartment : bookedApartments) {
+            for (BookedDate bookedDate : apartment.getBookedDates()) {
+                if (bookedDate.getUsername().equals(user.getName())) {
                     bookedApartmentsOut.add(new ApartmentDTOOut(
                             apartment.getId(),
                             apartment.getNumber(),
@@ -90,22 +103,13 @@ public class UserController {
                 }
             }
         }
-        System.out.println("----------------------");
         return bookedApartmentsOut;
-//        return bookedApartments
-//                .stream()
-//                .map(apartment -> new ApartmentDTOOut(
-//                        apartment.getId(),
-//                        apartment.getNumber(),
-//                        apartment.getCategory(),
-//                        apartment.getPrice()))
-//                .collect(Collectors.toList());
 
     }
 
     @GetMapping("/hotel/{username}/price")
     public double getPriceForAllBookedApartments(
-                    @PathVariable
+            @PathVariable
                     String username
     ) {
         User user = userService.findByName(username);
@@ -122,8 +126,8 @@ public class UserController {
         double sum = 0;
         for (Apartment apt : apartments) {
             sum += apt.getPrice();
-            for(AdditionalOption ao:apt.getAdditionalOptions()){
-                sum+=ao.getPrice();
+            for (AdditionalOption ao : apt.getAdditionalOptions()) {
+                sum += ao.getPrice();
             }
         }
         return sum;
