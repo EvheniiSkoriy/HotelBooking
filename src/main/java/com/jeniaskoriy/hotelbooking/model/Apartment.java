@@ -1,7 +1,6 @@
 package com.jeniaskoriy.hotelbooking.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -9,8 +8,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "apartment")
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Apartment implements Comparable<Apartment>{
 
     @Id
@@ -43,6 +43,15 @@ public class Apartment implements Comparable<Apartment>{
             joinColumns = @JoinColumn(name = "apartment_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users;
+
+    public Apartment(Integer number, Category category, Double price, List<AdditionalOption> additionalOptions, List<BookedDate> bookedDates, List<User> users) {
+        this.number = number;
+        this.category = category;
+        this.price = price;
+        this.additionalOptions = additionalOptions;
+        this.bookedDates = bookedDates;
+        this.users = users;
+    }
 
     @Override
     public int compareTo(Apartment o) {

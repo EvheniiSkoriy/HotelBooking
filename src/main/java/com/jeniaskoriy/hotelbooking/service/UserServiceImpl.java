@@ -5,14 +5,14 @@ import com.jeniaskoriy.hotelbooking.model.Apartment;
 import com.jeniaskoriy.hotelbooking.model.User;
 import com.jeniaskoriy.hotelbooking.repository.HotelRepository;
 import com.jeniaskoriy.hotelbooking.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;

@@ -30,6 +30,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "apartment_id"))
     private List<Apartment> bookedApartments;
 
+    public User(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public User(String name) {
         this.name = name;
     }
