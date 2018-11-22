@@ -119,13 +119,17 @@ public class UserController {
         } else {
             throw new UserNotFoundException(username);
         }
-        return calculatePrice(bookedApartments);
+        return calculatePrice(user.getName(), bookedApartments);
     }
 
-    private double calculatePrice(List<Apartment> apartments) {
+    private double calculatePrice(String username, List<Apartment> apartments) {
         double sum = 0;
         for (Apartment apt : apartments) {
-            sum += apt.getPrice();
+            for(BookedDate bookedDate: apt.getBookedDates()){
+                if(username.equals(bookedDate.getUsername())){
+                    sum += apt.getPrice();
+                }
+            }
             for (AdditionalOption ao : apt.getAdditionalOptions()) {
                 sum += ao.getPrice();
             }
