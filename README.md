@@ -12,8 +12,7 @@ like breakfast, cleaning with additional cost) for specified dates.
 options).
   7. View all bookings for the hotel.
   
-  For this application you must have jdk. You have to go to application's folder, open terminal and run next command 
- `mvn:spring-boot run` 
+  For this application you must have jdk. In folder with project run next command`mvn:spring-boot run` .
 And now more details about each endpoint.
 ####  1: View list of available rooms (room have a number, category, price, additional options
 #### like breakfast, cleaning with additional cost) for specified dates.
